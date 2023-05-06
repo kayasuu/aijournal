@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS food;
+
+CREATE TABLE journal_entries (
+    entry_id SERIAL PRIMARY KEY,
+    user_name TEXT NOT NULL,
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
