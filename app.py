@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    connection = psycopg2.connect(host=os.getenv("PGHOST"), user="pg", password=os.getenv("PGPASSWORD"), port=os.getenv("PGPORT"), dbname=os.getenv("PGDATABASE"))
+    connection = psycopg2.connect(host=os.getenv("PGHOST"), user=os.getenv("JUSER"), password=os.getenv("PGPASSWORD"), port=os.getenv("PGPORT"), dbname=os.getenv("PGDATABASE"))
     # connection = psycopg2.connect(os.getenv("DATABASE_URL"))
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM mytable;")
@@ -19,7 +19,7 @@ def index():
 
 @app.route('/entries')
 def entries():
-    connection = psycopg2.connect(host=os.getenv("PGHOST"), user="pg", password=os.getenv("PGPASSWORD"), port=os.getenv("PGPORT"), dbname=os.getenv("PGDATABASE"))
+    connection = psycopg2.connect(host=os.getenv("PGHOST"), user=os.getenv("JUSER"), password=os.getenv("PGPASSWORD"), port=os.getenv("PGPORT"), dbname=os.getenv("PGDATABASE"))
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM journal_entries;")
     entries = cursor.fetchall()
@@ -45,7 +45,7 @@ def add_entry():
 
 @app.route('/forms/entries/edit/<entry_id>')
 def edit_entry_form(entry_id):
-    connection = psycopg2.connect(host=os.getenv("PGHOST"), user=os.getenv("PGUSER"), password=os.getenv("PGPASSWORD"), port=os.getenv("PGPORT"), dbname=os.getenv("PGDATABASE"))
+    connection = psycopg2.connect(host=os.getenv("PGHOST"), user=os.getenv("JUSER"), password=os.getenv("PGPASSWORD"), port=os.getenv("PGPORT"), dbname=os.getenv("PGDATABASE"))
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM journal_entries WHERE entry_id=%s", (entry_id,))
     entry = cursor.fetchone()
