@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block body %}
+<form method="POST">
+    <label for="email">Email</label>
+    <input id="email" type="email" name="email">
+
+    <label for="user_name">Username</label>
+    <input id="user_name" type="text" name="user_name">
+
+    <label for="password">Password</label>
+    <input id="password" type="password" name="password">
+
+    <input type="submit">
+</form>
+{% endblock %}
