@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, jsonify
 from models import common, user
 import bcrypt
-import os
 import psycopg2
 
 
