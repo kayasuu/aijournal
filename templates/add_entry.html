@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="container">
+    <h1>Add Journal Entry</h1>
+    <form action="/api/entries/add" method="POST" class="entry-form">
+        <label for="title">Title:</label>
+        <input type="text" name="title" required><br><br>
+        <label for="content">Content:</label><br>
+        <textarea name="content" rows="10" cols="30" required></textarea><br><br>
+        <input type="submit" value="Submit">
+    </form>
+    <a href="/entries">Back to entries</a>
+</div>
+{% endblock %}

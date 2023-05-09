@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="container">
+    <h1>New Entry with Chatbot</h1>
+    <div id="chat-container">
+        <!-- Chat messages will be appended here -->
+    </div>
+    <form id="chat-form">
+        <label for="message">Message:</label>
+        <input type="text" name="message" id="message" required>
+        <input type="submit" value="Send">
+    </form>
+    <a href="/entries">Back to entries</a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const chatForm = document.getElementById('chat-form');
+    const chatContainer = document.getElementById('chat-container');
+
+    function addMessageToChat(content, sender) {
+        const message = document.createElement('p');
+        message.textContent = sender + ': ' + content;
+        chatContainer.appendChild(message);
+    }
+
+    chatForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const message = document.getElementById('message').value;
+        addMessageToChat(message, 'You');
+
+        const response = await fetch('/api/chatbot', {
+            method: 'POST',
+            body: new FormData(chatForm),
+        });
+        const jsonResponse = await response.json();
+        addMessageToChat(jsonResponse.response, 'Chatbot');
+
+        chatForm.reset();
+    });
+</script>
+{% endblock %}
