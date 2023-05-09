@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, session, jsonify
-from chatbot import chatbot_response
 from models import common, user
 import bcrypt
 import os
