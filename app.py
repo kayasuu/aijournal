@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session, jsonify
 # from chatbot import chatbot_response
 from models import common, user
+from sentiment_analysis import gpt_classify_sentiment, emotions
 import os
 import openai
 import bcrypt
@@ -47,13 +48,18 @@ def add_entry_form():
     else:
        return redirect("/login")
 
+
 @app.route('/api/entries/add', methods=['POST'])
 def add_entry():
     title = request.form['title']
     content = request.form['content']
     user_id = session['user_id']
 
-    common.sql_write("INSERT INTO journal_entries (user_id, title, content) VALUES (%s, %s, %s);", [user_id, title, content])
+    # Analyze the sentiment
+    sentiment = gpt_classify_sentiment(content)
+
+    # Save the entry with the sentiment
+    common.sql_write("INSERT INTO journal_entries (user_id, title, content, sentiment) VALUES (%s, %s, %s, %s);", [user_id, title, content, sentiment])
 
     return redirect('/entries')
 
@@ -75,10 +81,13 @@ def edit_entry_form(entry_id):
 def edit_entry(entry_id):
     title = request.form['title']
     content = request.form['content']
-    user_id = session["user_id"]
 
-    common.sql_write("UPDATE journal_entries SET title=%s, content=%s, updated_at=CURRENT_TIMESTAMP WHERE entry_id=%s AND user_id=%s",
-        [title, content, entry_id, user_id])
+    # Analyze the sentiment
+    sentiment = gpt_classify_sentiment(content, emotions)
+
+    # Update the entry with the new sentiment
+    common.sql_write("UPDATE journal_entries SET title=%s, content=%s, updated_at=CURRENT_TIMESTAMP, sentiment=%s WHERE entry_id=%s",
+        [title, content, sentiment, entry_id])
 
     return redirect('/entries')
 
@@ -121,8 +130,20 @@ def signup_action():
   user.add_user(request.form.get("email"), request.form.get("user_name"), request.form.get("password"))
   return redirect("/login")
 
+@app.route('/api/entries/<entry_id>/sentiment', methods=['POST'])
+def analyze_sentiment(entry_id):
+    # Get the journal entry text
+    connection = psycopg2.connect(host=os.getenv("PGHOST"), user=os.getenv("JUSER"), password=os.getenv("PGPASSWORD"), port=os.getenv("PGPORT"), dbname=os.getenv("PGDATABASE"))
+    cursor = connection.cursor()
+    cursor.execute("SELECT content FROM journal_entries WHERE entry_id=%s", (entry_id,))
+    content = cursor.fetchone()[0]
+    connection.close()
 
+    # Analyze the sentiment
+    sentiment = gpt_classify_sentiment(content)
 
+    # Return the sentiment as a JSON response
+    return jsonify({"sentiment": sentiment})
 
 if __name__ == '__main__':
     app.run(debug=True, port=os.getenv("PORT", default=5000))

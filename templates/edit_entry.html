@@ -13,6 +13,26 @@
     <form action="/api/entries/delete/{{ entry[0] }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this entry?');">
         <input type="submit" value="Delete">
     </form>
+    <form action="{{ url_for('analyze_sentiment', entry_id=entry[0]) }}" method="post" id="sentiment-analysis-form">
+        <input type="submit" value="Sentiment Analysis">
+    </form>
     <a href="/entries">Back to entries</a>
 </div>
+<div id="sentiment-result"></div>
+
+{% block javascript %}
+<script>
+    document.getElementById("sentiment-analysis-form").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        fetch(event.target.action, {
+            method: "POST"
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("sentiment-result").innerText = "Sentiment: " + data.sentiment;
+        });
+    });
+</script>
+{% endblock %}
 {% endblock %}
