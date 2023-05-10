@@ -28,15 +28,17 @@ def index():
 
 @app.route('/entries')
 def entries():
+    if not session.get("user_id", ""):
+        return redirect("/login")
+
+    user_id = session["user_id"]
     connection = psycopg2.connect(host=os.getenv("PGHOST"), user=os.getenv("JUSER"), password=os.getenv("PGPASSWORD"), port=os.getenv("PGPORT"), dbname=os.getenv("PGDATABASE"))
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM journal_entries;")
+    cursor.execute("SELECT * FROM journal_entries WHERE user_id=%s;", (user_id,))
     entries = cursor.fetchall()
     connection.close()
-    if session.get("user_id", ""):
-        return render_template("entries.html", entries=entries)
-    else:
-       return redirect("/login")
+
+    return render_template("entries.html", entries=entries)
 
 @app.route('/forms/entries/add')
 def add_entry_form():
@@ -49,9 +51,9 @@ def add_entry_form():
 def add_entry():
     title = request.form['title']
     content = request.form['content']
-    # user_id = session['user_id']
+    user_id = session['user_id']
 
-    common.sql_write("INSERT INTO journal_entries (title, content) VALUES (%s, %s);", [title, content])
+    common.sql_write("INSERT INTO journal_entries (user_id, title, content) VALUES (%s, %s, %s);", [user_id, title, content])
 
     return redirect('/entries')
 
@@ -73,15 +75,17 @@ def edit_entry_form(entry_id):
 def edit_entry(entry_id):
     title = request.form['title']
     content = request.form['content']
+    user_id = session["user_id"]
 
-    common.sql_write("UPDATE journal_entries SET title=%s, content=%s, updated_at=CURRENT_TIMESTAMP WHERE entry_id=%s",
-        [title, content, entry_id])
+    common.sql_write("UPDATE journal_entries SET title=%s, content=%s, updated_at=CURRENT_TIMESTAMP WHERE entry_id=%s AND user_id=%s",
+        [title, content, entry_id, user_id])
 
     return redirect('/entries')
 
 @app.route('/api/entries/delete/<entry_id>', methods=['POST'])
 def delete_entry(entry_id):
-    common.sql_write("DELETE FROM journal_entries WHERE entry_id=%s", (entry_id,))
+    user_id = session["user_id"]
+    common.sql_write("DELETE FROM journal_entries WHERE entry_id=%s AND user_id=%s", (entry_id, user_id))
 
     return redirect('/entries')
 
@@ -117,24 +121,7 @@ def signup_action():
   user.add_user(request.form.get("email"), request.form.get("user_name"), request.form.get("password"))
   return redirect("/login")
 
-@app.route('/index')
-def home():
-    return render_template('index.html')
 
-@app.route('/ask', methods=['POST'])
-def ask():
-    question = request.form['question']
-    messages = [{'role': 'system', 'content': 'Answer as concisely as possible.'}]
-    messages.append({'role': 'user', 'content': question})
-
-    completion = openai.ChatCompletion.create(
-        model='gpt-3.5-turbo',
-        messages=messages,
-        temperature=0.7
-    )
-
-    response = completion.choices[0]['message']['content']
-    return jsonify({'response': response})
 
 
 if __name__ == '__main__':
