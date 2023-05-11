@@ -11,7 +11,6 @@ import psycopg2
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'My secret key'
 openai.api_key = os.getenv("KEY")
-# openai.api_key = open('key.txt').read().strip('\n')
 
 @app.route('/')
 def index():
@@ -145,6 +144,12 @@ def analyze_sentiment(entry_id):
 
     # Return the sentiment as a JSON response
     return jsonify({"sentiment": sentiment})
+
+@app.route('/api/analyze_sentiment', methods=['POST'])
+def analyze_sentiment_add():
+    content = request.form.get('content')
+    sentiment = gpt_classify_sentiment(content)
+    return jsonify(sentiment=sentiment)
 
 if __name__ == '__main__':
     app.run(debug=True, port=os.getenv("PORT", default=5000))

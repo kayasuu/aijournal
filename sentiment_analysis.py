@@ -1,8 +1,6 @@
 import openai
 import os
 
-openai.api_key = open('key.txt').read().strip('\n')
-
 def gpt_classify_sentiment(prompt):
     # system_prompt = f'''You are an emotionally intelligent assistant.
     # Classify the sentiment of the user's text with ONLY ONE OF THE FOLLOWING EMOTIONS:

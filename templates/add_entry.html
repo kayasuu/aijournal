@@ -3,13 +3,39 @@
 {% block body %}
 <div class="container">
     <h1>Add Journal Entry</h1>
-    <form action="/api/entries/add" method="POST" class="entry-form">
+    <form action="/api/entries/add" method="POST" class="entry-form" id="entry-add-form">
         <label for="title">Title:</label>
         <input type="text" name="title" required><br><br>
         <label for="content">Content:</label><br>
         <textarea name="content" rows="10" cols="30" required></textarea><br><br>
         <input type="submit" value="Add">
     </form>
+
+    <form action="#" method="post" id="sentiment-analysis-form">
+        <input type="submit" value="Sentiment Analysis">
+    </form>
     <a href="/entries">Back to entries</a>
 </div>
+<div id="sentiment-result"></div>
+
+{% block javascript %}
+<script>
+    document.getElementById("sentiment-analysis-form").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const content = document.querySelector("textarea[name='content']").value;
+        const requestData = new FormData();
+        requestData.append("content", content);
+
+        fetch('/api/analyze_sentiment', {
+            method: "POST",
+            body: requestData
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("sentiment-result").innerText = "Sentiment: " + data.sentiment;
+        });
+    });
+</script>
+{% endblock %}
 {% endblock %}
