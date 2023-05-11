@@ -29,7 +29,7 @@ def entries():
         return redirect("/login")
 
     user_id = session["user_id"]
-    entries = common.sql_read("SELECT * FROM journal_entries WHERE user_id=%s;", (user_id,))
+    entries = common.sql_read("SELECT * FROM journal_entries WHERE user_id=%s ORDER BY updated_at DESC;", (user_id,))
     return render_template("entries.html", entries=entries)
 
 @app.route('/forms/entries/add')
@@ -63,7 +63,8 @@ def edit_entry_form(entry_id):
     connection.close()
 
     if session.get("user_id", ""):
-        return render_template('edit_entry.html', entry=entry)
+        entries = common.sql_read("SELECT * FROM journal_entries WHERE user_id=%s AND entry_id=%s ORDER BY updated_at DESC;", (session.get("user_id"), entry_id,))
+        return render_template('edit_entry.html', entry=entry, entries=entries)
     else:
         return redirect("/login")
     

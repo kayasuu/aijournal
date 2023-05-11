@@ -2,19 +2,22 @@
 
 
 {% block body %}
-<div class="container">
     <h1>Entries</h1>
     <div class="buttons-container">
     <a href="/forms/entries/add" class="new-entry-btn">New Entry</a>
     </div>
-    
+
     <div class="entries-grid">
         {% for entry in entries %}
-            <a href="/forms/entries/edit/{{ entry[0] }}" class="entry-card">
+        <div class="container">
+            <a href="/forms/entries/edit/{{ entry[0] }}" class="entry-card" data-hover="Click to edit entry">
                 <h2>{{ entry[2] }}</h2>
                 <p>{{ entry[6] }}</p>
+                <div class="date">
+                    <p>Created: {{ entry[4].strftime('%d %B %Y') }}</p>
+                </div>
             </a>
+        </div>
         {% endfor %}
     </div>
-</div>
 {% endblock %}

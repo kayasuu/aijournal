@@ -10,7 +10,7 @@ def gpt_classify_sentiment(prompt):
     to optimize their performance the following day. Based on the user's input, generate a thoughtful response
     that addresses their concerns or thoughts, and provide meaningful questions or suggestions
     to help them take action tomorrow.
-    Your response should be concise, <200 words, empathetic, supportive, and focused on promoting positive change tomorrow.
+    Your response should be concise, *no more than 150 words*, empathetic, supportive, and focused on promoting positive change tomorrow.
     '''
     response = openai.ChatCompletion.create(
         model='gpt-3.5-turbo', 

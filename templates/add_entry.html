@@ -8,14 +8,15 @@
             <input type="text" name="title" required><br><br>
             <label for="content">Content:</label><br>
             <textarea name="content" rows="10" cols="30" required></textarea><br><br>
-    <div class="buttons-container" id="edit_content_submit">
+        <div class="buttons-container" id="edit_content_submit">
+        <form action="#" method="post" class="sentiment-analysis-form" id="sentiment-analysis-form">
+            <input type="submit" value="AI Feedback">
+        </form>
+    
         <input type="submit" value="Add">
 
         </form>
 
-        <form action="#" method="post" id="sentiment-analysis-form">
-            <input type="submit" value="AI Feedback">
-        </form>
     </div>
     <h2>AI Feedback:</h2>
         <div id="sentiment-result">
@@ -41,7 +42,7 @@
         })
         .then(response => response.json())
         .then(data => {
-            document.getElementById("sentiment-result").innerText = "Sentiment: " + data.sentiment;
+            document.getElementById("sentiment-result").innerText = data.sentiment;
         });
     });
 </script>
