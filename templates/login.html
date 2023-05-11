@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 
 {% block body %}
+<div class="signup-container"> 
 <form method="POST">
+    <div class="fields">
     <label for="email">Email</label>
     <input id="email" type="email" name="email">
 
@@ -9,5 +11,7 @@
     <input id="password" type="password" name="password">
 
     <input type="submit">
+    </div>
 </form>
+</div>
 {% endblock %}

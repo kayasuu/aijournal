@@ -14,18 +14,14 @@ openai.api_key = os.getenv("KEY")
 
 @app.route('/')
 def index():
-    connection = psycopg2.connect(
-        host=os.getenv("PGHOST"), 
-        user=os.getenv("JUSER"), 
-        password=os.getenv("PGPASSWORD"), 
-        port=os.getenv("PGPORT"), 
-        dbname=os.getenv("PGDATABASE"))
-    # connection = psycopg2.connect(os.getenv("DATABASE_URL"))
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM mytable;")
-    results = cursor.fetchall()
-    connection.close()
-    return f"{results[0]}"
+    if not session.get("user_id", ""):
+        return redirect("/login")
+    else:
+       return redirect("/entries")
+
+@app.route('/about')
+def about():
+    return render_template("about.html")
 
 @app.route('/entries')
 def entries():
@@ -33,12 +29,7 @@ def entries():
         return redirect("/login")
 
     user_id = session["user_id"]
-    connection = psycopg2.connect(host=os.getenv("PGHOST"), user=os.getenv("JUSER"), password=os.getenv("PGPASSWORD"), port=os.getenv("PGPORT"), dbname=os.getenv("PGDATABASE"))
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM journal_entries WHERE user_id=%s;", (user_id,))
-    entries = cursor.fetchall()
-    connection.close()
-
+    entries = common.sql_read("SELECT * FROM journal_entries WHERE user_id=%s;", (user_id,))
     return render_template("entries.html", entries=entries)
 
 @app.route('/forms/entries/add')

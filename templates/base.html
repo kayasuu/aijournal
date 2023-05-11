@@ -9,19 +9,21 @@
   </head>
   <body>
     <header>
-      <nav>
-        <a href="/about">About</a>
-        <a href="/home">Home</a>
-        {% if session.user_id %}
-        <div class="header-links">
-            <a href="{{ url_for('logout') }}">Logout</a>
-            <span>Welcome, {{ session.user_name }}</span>
-        {% else %}
-            <a href="{{ url_for('login_form') }}">Login</a>
-            <a href="{{ url_for('signup') }}">Signup</a>
-          </div>
-        {% endif %}
-      </nav>
+      <nav class="navbar">
+        <div class="navbar-left">
+            <a href="/about">About</a>
+            <a href="/entries">Entries</a>
+        </div>
+        <div class="navbar-right">
+            {% if session.user_id %}
+              <span>Welcome, {{ session.user_name }}</span>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login_form') }}">Login</a>
+                <a href="{{ url_for('signup') }}">Signup</a>
+            {% endif %}
+        </div>
+    </nav>
     </header>
     {% block body %}{% endblock %}
   </body>

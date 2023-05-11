@@ -2,11 +2,7 @@ import openai
 import os
 
 def gpt_classify_sentiment(prompt):
-    # system_prompt = f'''You are an emotionally intelligent assistant.
-    # Classify the sentiment of the user's text with ONLY ONE OF THE FOLLOWING EMOTIONS:
-    # {emotions}.
-    # After classifying the text, responpint with the emotion ONLY.'''
-    
+
     system_prompt = f'''
     You are an AI trained to provide top-tier advice on personal growth and self-improvement, 
     with the expertise of a professional clinical psychologist and performance coach. 
@@ -29,4 +25,3 @@ def gpt_classify_sentiment(prompt):
         r = 'N/A'
     return r
 
-emotions = 'Happy, Sad, Angry, Anxious, Excited, Frustrated, Confident, Fearful, Bored, Grateful, Nervous, Surprised, Calm, Jealous, Lonely, Content, Embarrassed, Overwhelmed, Curious, Disappointed, Amused, Inspired, Disgusted, Guilty, Relieved, Proud, Ashamed, Hopeful, Shy, Skeptical, Apathetic, Melancholic, Agitated, Loving, Envious, Tired, Suspicious, Eager, Hesitant, Shocked, Compassionate, Energized, Bewildered, Resentful, Regretful, Admiration, Despair, Nostalgic, Serene, Vulnerable'
