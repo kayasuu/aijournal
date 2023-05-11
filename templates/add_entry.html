@@ -2,21 +2,29 @@
 
 {% block body %}
 <div class="container">
-    <h1>Add Journal Entry</h1>
-    <form action="/api/entries/add" method="POST" class="entry-form" id="entry-add-form">
-        <label for="title">Title:</label>
-        <input type="text" name="title" required><br><br>
-        <label for="content">Content:</label><br>
-        <textarea name="content" rows="10" cols="30" required></textarea><br><br>
+    <h1>New Entry</h1>
+        <form action="/api/entries/add" method="POST" class="entry-form" id="entry-add-form">
+            <label for="title">Title:</label>
+            <input type="text" name="title" required><br><br>
+            <label for="content">Content:</label><br>
+            <textarea name="content" rows="10" cols="30" required></textarea><br><br>
+    <div class="buttons-container" id="edit_content_submit">
         <input type="submit" value="Add">
-    </form>
 
-    <form action="#" method="post" id="sentiment-analysis-form">
-        <input type="submit" value="Sentiment Analysis">
-    </form>
-    <a href="/entries">Back to entries</a>
+        </form>
+
+        <form action="#" method="post" id="sentiment-analysis-form">
+            <input type="submit" value="AI Feedback">
+        </form>
+    </div>
+    <h2>AI Feedback:</h2>
+        <div id="sentiment-result">
+             {% for entry in entries %}
+             <p>{{ entry[6] }}</p>
+             {% endfor %}
+        </div>
 </div>
-<div id="sentiment-result"></div>
+<a href="/entries">Back to entries</a>
 
 {% block javascript %}
 <script>
