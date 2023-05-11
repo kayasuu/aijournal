@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, session, jsonify
 # from chatbot import chatbot_response
 from models import common, user
-from sentiment_analysis import gpt_classify_sentiment, emotions
+from sentiment_analysis import gpt_classify_sentiment
 import os
 import openai
 import bcrypt
@@ -10,7 +10,8 @@ import psycopg2
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'My secret key'
-openai.api_key = open('key.txt').read().strip('\n')
+openai.api_key = os.getenv("KEY")
+# openai.api_key = open('key.txt').read().strip('\n')
 
 @app.route('/')
 def index():
@@ -83,7 +84,7 @@ def edit_entry(entry_id):
     content = request.form['content']
 
     # Analyze the sentiment
-    sentiment = gpt_classify_sentiment(content, emotions)
+    sentiment = gpt_classify_sentiment(content)
 
     # Update the entry with the new sentiment
     common.sql_write("UPDATE journal_entries SET title=%s, content=%s, updated_at=CURRENT_TIMESTAMP, sentiment=%s WHERE entry_id=%s",
