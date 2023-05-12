@@ -1,5 +1,5 @@
 # README
-Journal can  https://aijournal.onrender.com
+Journal can be accessed here: https://aijournal.onrender.com
 
 ## JOURN AI
 Journ AI is an intelligent journal that not only records your thoughts but also provides meaningful feedback for self-improvement. Just jot down your daily activities, emotions, goals, and challenges, and Journ AI gives you insight into your patterns, offering tailored prompts to optimise tomorrow.
