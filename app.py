@@ -9,7 +9,7 @@ import psycopg2
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'My secret key'
+app.config['SECRET_KEY'] = "SECRET"
 openai.api_key = os.getenv("KEY")
 
 @app.route('/')
@@ -119,29 +119,30 @@ def signup():
 
 @app.route("/signup", methods=["POST"])
 def signup_action():
-  user.add_user(request.form.get("email"), request.form.get("user_name"), request.form.get("password"))
-  return redirect("/login")
+    user.add_user(request.form.get("email"), request.form.get("user_name"), request.form.get("password"))
 
-@app.route('/api/entries/<entry_id>/sentiment', methods=['POST'])
-def analyze_sentiment(entry_id):
-    # Get the journal entry text
-    connection = psycopg2.connect(host=os.getenv("PGHOST"), user=os.getenv("JUSER"), password=os.getenv("PGPASSWORD"), port=os.getenv("PGPORT"), dbname=os.getenv("PGDATABASE"))
-    cursor = connection.cursor()
-    cursor.execute("SELECT content FROM journal_entries WHERE entry_id=%s", (entry_id,))
-    content = cursor.fetchone()[0]
-    connection.close()
+    return redirect('/login')
 
-    # Analyze the sentiment
-    sentiment = gpt_classify_sentiment(content)
+# @app.route('/api/entries/<entry_id>/sentiment', methods=['POST'])
+# def analyze_sentiment(entry_id):
+#     # Get the journal entry text
+#     connection = psycopg2.connect(host=os.getenv("PGHOST"), user=os.getenv("JUSER"), password=os.getenv("PGPASSWORD"), port=os.getenv("PGPORT"), dbname=os.getenv("PGDATABASE"))
+#     cursor = connection.cursor()
+#     cursor.execute("SELECT content FROM journal_entries WHERE entry_id=%s", (entry_id,))
+#     content = cursor.fetchone()[0]
+#     connection.close()
 
-    # Return the sentiment as a JSON response
-    return jsonify({"sentiment": sentiment})
+#     # Analyze the sentiment
+#     sentiment = gpt_classify_sentiment(content)
 
-@app.route('/api/analyze_sentiment', methods=['POST'])
-def analyze_sentiment_add():
-    content = request.form.get('content')
-    sentiment = gpt_classify_sentiment(content)
-    return jsonify(sentiment=sentiment)
+#     # Return the sentiment as a JSON response
+#     return jsonify({"sentiment": sentiment})
+
+# @app.route('/api/analyze_sentiment', methods=['POST'])
+# def analyze_sentiment_add():
+#     content = request.form.get('content')
+#     sentiment = gpt_classify_sentiment(content)
+#     return jsonify(sentiment=sentiment)
 
 if __name__ == '__main__':
     app.run(debug=True, port=os.getenv("PORT", default=5000))
