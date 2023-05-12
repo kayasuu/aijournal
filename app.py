@@ -123,27 +123,6 @@ def signup_action():
 
     return redirect('/login')
 
-# @app.route('/api/entries/<entry_id>/sentiment', methods=['POST'])
-# def analyze_sentiment(entry_id):
-#     # Get the journal entry text
-#     connection = psycopg2.connect(host=os.getenv("PGHOST"), user=os.getenv("JUSER"), password=os.getenv("PGPASSWORD"), port=os.getenv("PGPORT"), dbname=os.getenv("PGDATABASE"))
-#     cursor = connection.cursor()
-#     cursor.execute("SELECT content FROM journal_entries WHERE entry_id=%s", (entry_id,))
-#     content = cursor.fetchone()[0]
-#     connection.close()
-
-#     # Analyze the sentiment
-#     sentiment = gpt_classify_sentiment(content)
-
-#     # Return the sentiment as a JSON response
-#     return jsonify({"sentiment": sentiment})
-
-# @app.route('/api/analyze_sentiment', methods=['POST'])
-# def analyze_sentiment_add():
-#     content = request.form.get('content')
-#     sentiment = gpt_classify_sentiment(content)
-#     return jsonify(sentiment=sentiment)
-
 if __name__ == '__main__':
     app.run(debug=True, port=os.getenv("PORT", default=5000))
 
