@@ -5,17 +5,9 @@
     <h1>new entry</h1>
         <form action="/api/entries/add" method="POST" class="entry-form" id="entry-add-form">
             <label for="title">TITLE:</label>
-            <input type="text" name="title" placeholder="Write a short but descriptive title about your day" required><br><br>
+            <input type="text" name="title" placeholder="write a short but descriptive title about your day" required><br><br>
             <label for="content">REFLECTIONS:</label><br>
-            <textarea name="content" rows="10" cols="30" placeholder=
-            "Some ideas:
-        What were your main activities and achievements?
-        How did your mood fluctuate throughout the day and were there any triggers?
-        Were there tasks you found yourself procrastinating on?
-        Did you manage a good balance between work and relaxation? 
-        Did you meet your goals, and if not, what held you back? 
-        If you could relive the day, what would you do differently?
-        What are your aspirations for tomorrow, and how do you plan on achieving them?" required></textarea><br><br>
+            <textarea name="content" rows="10" cols="30" placeholder="jot down your daily activities, emotions, goals, and challenges" required></textarea><br><br>
         <div class="buttons-container" id="edit_content_submit">
         <form action="#" method="post" class="sentiment-analysis-form" id="sentiment-analysis-form">
             <input type="submit" value="AI Feedback">
