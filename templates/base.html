@@ -4,6 +4,12 @@
     <meta charset="utf-8" />
     {% block head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=Work+Sans&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=Red+Hat+Display&family=Work+Sans&display=swap" rel="stylesheet">
     {% endblock %}
     <title>Journal</title>
   </head>
@@ -11,22 +17,23 @@
     <header>
       <nav class="navbar">
         <div class="navbar-left">
-            <a href="/about">About</a>
-            <a href="/entries">Entries</a>
-            <a href="/forms/entries/add">New Entry</a>
+            <a href="/about">about</a>
+            <a href="/entries">entries</a>
+            <a href="/forms/entries/add">new entry</a>
         </div>
-        <h2 id="title">AI Journal</h1>
+        <h2 id="title">journ ai</h1>
         <div class="navbar-right">
             {% if session.user_id %}
               <span>Welcome, {{ session.user_name }}</span>
-                <a href="{{ url_for('logout') }}">Logout</a>
+                <a href="{{ url_for('logout') }}">logout</a>
             {% else %}
-                <a href="{{ url_for('login_form') }}">Login</a>
-                <a href="{{ url_for('signup') }}">Signup</a>
+                <a href="{{ url_for('login_form') }}">login</a>
+                <a href="{{ url_for('signup') }}">signup</a>
             {% endif %}
         </div>
     </nav>
     </header>
     {% block body %}{% endblock %}
+
   </body>
 </html>

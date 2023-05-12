@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, session, jsonify
-# from chatbot import chatbot_response
 from models import common, user
 from sentiment_analysis import gpt_classify_sentiment
 import os
@@ -9,8 +8,13 @@ import psycopg2
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "SECRET"
+
 openai.api_key = os.getenv("KEY")
+
+# app.config['SECRET_KEY'] = "SECRET"
+my_secret_key=os.getenv("SECRET_KEY")
+app.config['SECRET_KEY'] = my_secret_key
+
 
 @app.route('/')
 def index():
@@ -25,11 +29,17 @@ def about():
 
 @app.route('/entries')
 def entries():
+    #Checks if there is a user_id stored in the user's session data. No user_id means the user is not logged in.
     if not session.get("user_id", ""):
         return redirect("/login")
 
+    #If the user is logged in, this line gets the user_id from the session data.
     user_id = session["user_id"]
+
+    #Fetches all entries from the 'journal_entries' table in the database that belong to the logged-in user, sorted by the 'updated_at' field in descending order
     entries = common.sql_read("SELECT * FROM journal_entries WHERE user_id=%s ORDER BY updated_at DESC;", (user_id,))
+    
+    #Renders entries.html' template, passing the fetched journal entries to the template
     return render_template("entries.html", entries=entries)
 
 @app.route('/forms/entries/add')
@@ -46,16 +56,17 @@ def add_entry():
     content = request.form['content']
     user_id = session['user_id']
 
-    # Analyze the sentiment
+    #Get AI advice based on user's journal entry, and add it to user's entries database. 
     sentiment = gpt_classify_sentiment(content)
-
-    # Save the entry with the sentiment
     common.sql_write("INSERT INTO journal_entries (user_id, title, content, sentiment) VALUES (%s, %s, %s, %s);", [user_id, title, content, sentiment])
 
     return redirect('/entries')
 
 @app.route('/forms/entries/edit/<entry_id>')
 def edit_entry_form(entry_id):
+
+    #Select user's journal entry by ID, and then if user is logged in display the page with their previous entry and AI feedback
+
     connection = psycopg2.connect(host=os.getenv("PGHOST"), user=os.getenv("JUSER"), password=os.getenv("PGPASSWORD"), port=os.getenv("PGPORT"), dbname=os.getenv("PGDATABASE"))
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM journal_entries WHERE entry_id=%s", (entry_id,))
@@ -63,7 +74,7 @@ def edit_entry_form(entry_id):
     connection.close()
 
     if session.get("user_id", ""):
-        entries = common.sql_read("SELECT * FROM journal_entries WHERE user_id=%s AND entry_id=%s ORDER BY updated_at DESC;", (session.get("user_id"), entry_id,))
+        entries = common.sql_read("SELECT * FROM journal_entries WHERE user_id=%s AND entry_id=%s;", (session.get("user_id"), entry_id,))
         return render_template('edit_entry.html', entry=entry, entries=entries)
     else:
         return redirect("/login")
@@ -71,13 +82,14 @@ def edit_entry_form(entry_id):
 
 @app.route('/api/entries/edit/<entry_id>', methods=['POST'])
 def edit_entry(entry_id):
+
+    #Update the journal entry with new title, content and AI generated feedback. 
+
     title = request.form['title']
     content = request.form['content']
 
-    # Analyze the sentiment
     sentiment = gpt_classify_sentiment(content)
 
-    # Update the entry with the new sentiment
     common.sql_write("UPDATE journal_entries SET title=%s, content=%s, updated_at=CURRENT_TIMESTAMP, sentiment=%s WHERE entry_id=%s",
         [title, content, sentiment, entry_id])
 
@@ -85,6 +97,9 @@ def edit_entry(entry_id):
 
 @app.route('/api/entries/delete/<entry_id>', methods=['POST'])
 def delete_entry(entry_id):
+
+    #Delete entry
+
     user_id = session["user_id"]
     common.sql_write("DELETE FROM journal_entries WHERE entry_id=%s AND user_id=%s", (entry_id, user_id))
 
@@ -98,6 +113,8 @@ def login_form():
 def login_action():
     email = request.form.get('email')
     plain_text_password = request.form.get('password')
+
+    #if login details are valid, declare session as under userID+username. 
 
     curr_user = user.get_user_if_valid(email, plain_text_password)
     if curr_user:
@@ -125,15 +142,3 @@ def signup_action():
 
 if __name__ == '__main__':
     app.run(debug=True, port=os.getenv("PORT", default=5000))
-
-
-
-
-
-#button new note, onlick, second screen. 
-#simple form, input heading for form 
-#/chat route 
-# text box towards the end/botton of screen. 
-#user types in text box, presses sends. sends to flask app, aand then forward that input to chagpt, chatgpt sends you response, 
-#users tab;e, notes table, message table, key table.
-#how do you identify that a given record a reply, or original message was sent, how will you figure out the sequence of messages. 
