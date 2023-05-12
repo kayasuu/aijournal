@@ -62,6 +62,7 @@ h1 {
 }
 
 .entry-card {
+    margin: 0 auto;
     display: block;
     padding: 2rem;
     background: #fff;
