@@ -27,4 +27,3 @@ def gpt_classify_sentiment(prompt):
     if r == '':
         r = 'N/A'
     return r
-
